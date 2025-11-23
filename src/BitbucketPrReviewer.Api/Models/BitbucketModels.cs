@@ -6,6 +6,7 @@ public sealed class BitbucketPullRequestEvent
 {
     [JsonPropertyName("pullrequest")] public BitbucketPullRequest? PullRequest { get; set; }
     [JsonPropertyName("repository")] public BitbucketRepository? Repository { get; set; }
+    [JsonPropertyName("additionalInformation")] public string? AdditionalInformation { get; set; }
 }
 
 public sealed class BitbucketRepository
@@ -61,6 +62,46 @@ public sealed class ReviewResult
     public string Summary { get; set; } = string.Empty;
     public List<ReviewComment> Comments { get; set; } = new();
     public int PostedComments { get; set; }
+}
+
+public sealed class ReviewRequest
+{
+    public string PrUrl { get; set; } = string.Empty;
+    public string? AdditionalInformation { get; set; }
+}
+
+public sealed class ParsedPrUrl
+{
+    public string Provider { get; set; } = string.Empty; // "bitbucket" or "github"
+    public string Workspace { get; set; } = string.Empty; // workspace/owner
+    public string RepoSlug { get; set; } = string.Empty; // repo name
+    public int PrId { get; set; }
+}
+
+// GitHub Models
+public sealed class GitHubPullRequest
+{
+    [JsonPropertyName("number")] public int Number { get; set; }
+    [JsonPropertyName("title")] public string? Title { get; set; }
+    [JsonPropertyName("head")] public GitHubRef? Head { get; set; }
+    [JsonPropertyName("base")] public GitHubRef? Base { get; set; }
+}
+
+public sealed class GitHubRef
+{
+    [JsonPropertyName("ref")] public string? Ref { get; set; }
+    [JsonPropertyName("sha")] public string? Sha { get; set; }
+}
+
+public sealed class GitHubFileChange
+{
+    [JsonPropertyName("filename")] public string? Filename { get; set; }
+    [JsonPropertyName("status")] public string? Status { get; set; }
+}
+
+public sealed class GitHubPullRequestDiff
+{
+    [JsonPropertyName("files")] public List<GitHubFileChange>? Files { get; set; }
 }
 
 

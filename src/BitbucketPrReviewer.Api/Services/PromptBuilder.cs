@@ -13,12 +13,21 @@ public sealed class PromptBuilder
         _settings = options.Value;
     }
 
-    public (string systemPrompt, string userPrompt) Build(string prTitle, IEnumerable<(string path, string content, string diff)> files)
+    public (string systemPrompt, string userPrompt) Build(string prTitle, IEnumerable<(string path, string content, string diff)> files, string? additionalInformation = null)
     {
         var system = "You are a senior code reviewer. Produce concise, actionable review comments in strict JSON with fields: filePath, line, comment, severity (info|suggestion|warning|error).";
 
         var sb = new StringBuilder();
         sb.AppendLine($"PR Title: {prTitle}");
+        
+        if (!string.IsNullOrWhiteSpace(additionalInformation))
+        {
+            sb.AppendLine();
+            sb.AppendLine("Additional Context from Senior Developer:");
+            sb.AppendLine(additionalInformation);
+            sb.AppendLine();
+        }
+        
         sb.AppendLine("Files to review:");
 
         foreach (var (path, content, diff) in files)

@@ -9,6 +9,14 @@ public sealed class BitbucketSettings
     public string AppPassword { get; set; } = string.Empty;
 }
 
+public sealed class GitHubSettings
+{
+    public string BaseUrl { get; set; } = "https://api.github.com/";
+    public string Owner { get; set; } = string.Empty;
+    public string Repo { get; set; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
+}
+
 public sealed class OpenAISettings
 {
     public string Provider { get; set; } = "OpenAI"; // OpenAI or Azure
