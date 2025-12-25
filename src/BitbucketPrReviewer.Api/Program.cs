@@ -21,12 +21,13 @@ builder.Services.AddHttpClient<BitbucketClient>((sp, client) =>
     }
 }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
 {
-    // Allow envs with corporate proxies/SSL interceptors if needed later
+    AllowAutoRedirect = false
 });
 
 builder.Services.AddHttpClient<GitHubClient>((sp, client) =>
 {
     var settings = sp.GetRequiredService<IOptions<GitHubSettings>>().Value;
+    
     if (!string.IsNullOrWhiteSpace(settings.BaseUrl))
     {
         client.BaseAddress = new Uri(settings.BaseUrl);

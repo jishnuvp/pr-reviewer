@@ -80,8 +80,9 @@ public sealed class ReviewService
                 await _bb.PostInlineCommentAsync(workspace, repoSlug, prId, c, ct);
                 result.PostedComments++;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error posting comment: {ex.Message}");
                 // skip posting errors to not fail whole review
             }
         }
@@ -126,10 +127,11 @@ public sealed class ReviewService
                 await _gh.PostInlineCommentAsync(owner, repo, prNumber, c, ct);
                 result.PostedComments++;
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error posting comment: {ex.Message}");
                 // skip posting errors to not fail whole review
-            }
+            }  
         }
 
         return result;
