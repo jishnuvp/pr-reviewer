@@ -1,4 +1,4 @@
-.navbar-toggler {
+/*.navbar-toggler {
     appearance: none;
     cursor: pointer;
     width: 3.5rem;
@@ -24,9 +24,9 @@
     font-size: 1.1rem;
 }
 
-.nav-scrollable {
+.nav-scrollable {*/
     /* Allow sidebar to scroll for tall menus */
-    height: calc(100vh - 3.5rem);
+    /*height: calc(100vh - 3.5rem);
     overflow-y: auto;
 }
 
@@ -71,15 +71,15 @@
         display: none;
     }
 
-    .collapse {
+    .collapse {*/
         /* Never collapse the sidebar for wide screens */
-        display: block;
+        /*display: block;
     }
     
-    .nav-scrollable {
+    .nav-scrollable {*/
         /* Allow sidebar to scroll for tall menus */
-        height: calc(100vh - 3.5rem);
+        /*height: calc(100vh - 3.5rem);
         overflow-y: auto;
     }
-}
+}*/
 

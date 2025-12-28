@@ -1,15 +1,18 @@
 @inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
+    @* <div class="sidebar">
         <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <h1>PR Reviewer</h1>
+    </div> *@
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-search"></i>
+                AI Powered PR Reviewer
+            </a>
         </div>
-
+    </nav>
+    <main>
         <article class="content px-4">
             @Body
         </article>
