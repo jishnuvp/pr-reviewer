@@ -1,0 +1,122 @@
+@page "/"
+@using PrReviewer.Client.Models
+@using PrReviewer.Client.Services
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+@inject IPrReviewService PrReviewService
+
+<PageTitle>PR Reviewer</PageTitle>
+
+<div class="review-container">
+    <h1>Submit PR for Review</h1>
+    
+    <EditForm Model="@request" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        
+        <div class="form-group">
+            <label for="prUrl">PR URL *</label>
+            <InputText id="prUrl" @bind-Value="request.PrUrl" class="form-control" placeholder="https://github.com/owner/repo/pull/123 or https://bitbucket.org/workspace/repo/pull-requests/123" />
+            <ValidationMessage For="@(() => request.PrUrl)" />
+        </div>
+
+        <div class="form-group">
+            <label for="additionalInfo">Additional Information (Optional)</label>
+            <InputTextArea id="additionalInfo" @bind-Value="request.AdditionalInformation" class="form-control" rows="4" placeholder="Enter any additional context or requirements for the review..." />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+                @if (isSubmitting)
+                {
+                    <span class="spinner"></span>
+                    <span>Submitting...</span>
+                }
+                else
+                {
+                    <span>Submit Review</span>
+                }
+            </button>
+            @if (hasError)
+            {
+                <button type="button" class="btn btn-secondary" @onclick="ClearError">Clear</button>
+            }
+        </div>
+    </EditForm>
+
+    @if (hasError)
+    {
+        <div class="alert alert-error">
+            <strong>Error:</strong> @errorMessage
+        </div>
+    }
+
+    @if (response != null)
+    {
+        <div class="result-container">
+            <h2>Review Results</h2>
+            <div class="result-card">
+                <div class="result-header">
+                    <span class="status-badge status-@response.Status.ToLower()">@response.Status</span>
+                </div>
+                
+                <div class="result-section">
+                    <h3>Summary</h3>
+                    <p class="summary-text">@response.Summary</p>
+                </div>
+
+                <div class="result-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Comments:</span>
+                        <span class="stat-value">@response.TotalComments</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Posted Comments:</span>
+                        <span class="stat-value">@response.PostedComments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private ReviewRequest request = new();
+    private ReviewResponse? response;
+    private bool isSubmitting = false;
+    private bool hasError = false;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleSubmit()
+    {
+        isSubmitting = true;
+        hasError = false;
+        errorMessage = string.Empty;
+        response = null;
+
+        try
+        {
+            response = await PrReviewService.SubmitReviewRequestAsync(request);
+        }
+        catch (HttpRequestException ex)
+        {
+            hasError = true;
+            errorMessage = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            hasError = true;
+            errorMessage = $"An unexpected error occurred: {ex.Message}";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private void ClearError()
+    {
+        hasError = false;
+        errorMessage = string.Empty;
+    }
+}
+

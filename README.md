@@ -4,14 +4,18 @@ This service provides an API endpoint to automatically review Pull Requests from
 
 ### Stack
 - .NET 8 Web API
+- Blazor WebAssembly Client
 - Bitbucket Cloud REST API v2
 - GitHub REST API v3
 - OpenAI / Azure OpenAI Chat Completions
 
 ### Project Layout
 - `src/BitbucketPrReviewer.Api` – Web API, controllers, services, settings
+- `src/PrReviewer.Client` – Blazor WebAssembly client application
 
 ### Build & Run
+
+#### API Server
 1. Install .NET 8 SDK.
 2. Set configuration via environment variables or `appsettings.json` (see below).
 3. Run:
@@ -21,6 +25,21 @@ dotnet run --project src/BitbucketPrReviewer.Api
 ```
 
 The API listens on the default Kestrel ports (e.g., `http://localhost:5242`).
+
+#### Blazor WebAssembly Client
+1. Ensure the API server is running (see above).
+2. Update `src/PrReviewer.Client/appsettings.json` with the correct API base URL if needed (default: `http://localhost:5242`).
+3. Run:
+```bash
+dotnet run --project src/PrReviewer.Client
+```
+
+The client application will be available at `http://localhost:5243` (or the port specified in launch settings).
+
+#### Build All Projects
+```bash
+dotnet build PrReviewer.sln
+```
 
 ### API Endpoints
 

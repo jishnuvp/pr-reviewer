@@ -5,7 +5,6 @@ using Microsoft.Extensions.Options;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.Configure<BitbucketSettings>(builder.Configuration.GetSection("Bitbucket"));
 builder.Services.Configure<GitHubSettings>(builder.Configuration.GetSection("GitHub"));
@@ -41,8 +40,21 @@ builder.Services.AddSingleton<PromptBuilder>();
 builder.Services.AddSingleton<OpenAIClient>();
 builder.Services.AddScoped<ReviewService>();
 
-var app = builder.Build();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("BlazorWasm", policy =>
+    {
+        policy
+            .WithOrigins("https://localhost:5244")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
 
+
+var app = builder.Build();
+app.UseCors("BlazorWasm");
 app.MapControllers();
 
 app.Run();
