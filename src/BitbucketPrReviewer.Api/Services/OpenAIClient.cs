@@ -24,14 +24,16 @@ public sealed class OpenAIClient
 
     public async Task<string> GetReviewJsonAsync(string systemPrompt, string userPrompt, CancellationToken ct)
     {
-        if (string.Equals(_settings.Provider, "Azure", StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(_settings.Provider, "Azure", StringComparison.OrdinalIgnoreCase))
         {
-            return await CallAzureChatCompletions(systemPrompt, userPrompt, ct);
+            throw new InvalidOperationException(
+                "Invalid OpenAI configuration. Only 'Azure' provider is supported.");
         }
-        return await CallOpenAIChatCompletions(systemPrompt, userPrompt, ct);
+
+        return await CallAzureClient(systemPrompt, userPrompt, ct);
     }
 
-    private async Task<string> CallOpenAIChatCompletions(string systemPrompt, string userPrompt, CancellationToken ct)
+    private async Task<string> CallAzureClient(string systemPrompt, string userPrompt, CancellationToken ct)
     {
         var url = "v1/chat/completions";
         var body = new
@@ -49,31 +51,6 @@ public sealed class OpenAIClient
         res.EnsureSuccessStatusCode();
         using var stream = await res.Content.ReadAsStreamAsync(ct);
         using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
-        var content = doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
-        return content ?? "{}";
-    }
-
-    private async Task<string> CallAzureChatCompletions(string systemPrompt, string userPrompt, CancellationToken ct)
-    {
-        var path = $"openai/deployments/{_settings.AzureDeployment}/chat/completions?api-version={_settings.ApiVersion}";
-
-        using var client = new HttpClient { BaseAddress = new Uri(_settings.Endpoint) };
-        client.DefaultRequestHeaders.Add("api-key", _settings.ApiKey);
-
-        var body = new
-        {
-            response_format = new { type = "json_object" },
-            messages = new object[]
-            {
-                new { role = "system", content = systemPrompt },
-                new { role = "user", content = userPrompt }
-            }
-        };
-
-        using var res = await client.PostAsJsonAsync(path, body, ct);
-        res.EnsureSuccessStatusCode();
-        var json = await res.Content.ReadAsStringAsync(ct);
-        using var doc = JsonDocument.Parse(json);
         var content = doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
         return content ?? "{}";
     }
