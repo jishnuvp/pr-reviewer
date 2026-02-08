@@ -7,7 +7,7 @@ This service provides an API endpoint to automatically review Pull Requests from
 - Blazor WebAssembly Client
 - Bitbucket Cloud REST API v2
 - GitHub REST API v3
-- OpenAI / Azure OpenAI Chat Completions
+- OpenAI / Azure OpenAI Chat Completions 
 
 ### Project Layout
 - `src/BitbucketPrReviewer.Api` – Web API, controllers, services, settings
